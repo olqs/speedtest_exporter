@@ -101,7 +101,7 @@ func (e *Exporter) speedtest(testUUID string, ch chan<- prometheus.Metric) bool 
 	}
 
 	// returns list of servers in distance order
-	serverList, err := speedtest.FetchServerList(user)
+	serverList, err := speedtest.FetchServers(user)
 	if err != nil {
 		log.Errorf("could not fetch server list: %s", err.Error())
 		return false
@@ -109,22 +109,24 @@ func (e *Exporter) speedtest(testUUID string, ch chan<- prometheus.Metric) bool 
 
 	var server *speedtest.Server
 
-	if e.serverID == -1 {
-		server = serverList.Servers[0]
-	} else {
-		servers, err := serverList.FindServer([]int{e.serverID})
-		if err != nil {
-			log.Error(err)
-			return false
-		}
-
-		if servers[0].ID != fmt.Sprintf("%d", e.serverID) && !e.serverFallback {
-			log.Errorf("could not find your choosen server ID %d in the list of avaiable servers, server_fallback is not set so failing this test", e.serverID)
-			return false
-		}
-
-		server = servers[0]
-	}
+//	if e.serverID == -1 {
+//		servers, = serverList.FindServer([]int{e.serverID})
+//	} else {
+//		servers, err := serverList.FindServer([]int{e.serverID})
+//		if err != nil {
+//			log.Error(err)
+//			return false
+//		}
+//
+//		if servers[0].ID != fmt.Sprintf("%d", e.serverID) && !e.serverFallback {
+//			log.Errorf("could not find your choosen server ID %d in the list of avaiable servers, server_fallback is not set so failing this test", e.serverID)
+//			return false
+//		}
+//
+//		server = servers[0]
+//	}
+  servers, err := serverList.FindServer([]int{e.serverID})
+  server = servers[0]
 
 	ok := pingTest(testUUID, user, server, ch)
 	ok = downloadTest(testUUID, user, server, ch) && ok
