@@ -29,7 +29,7 @@ ADD . ${GOPATH}/src/app/
 WORKDIR ${GOPATH}/src/app
 
 RUN go mod download github.com/showwin/speedtest-go
-RUN go build -a -installsuffix cgo -ldflags="-w -s" -o speedtest_exporter ./cmd/speedtest_exporter/main.go
+RUN go build -a -installsuffix cgo -ldflags="-w -s" -o /speedtest_exporter ./cmd/speedtest_exporter/main.go
 
 # --------------------------------------------------------------------------------
 
