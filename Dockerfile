@@ -29,22 +29,21 @@ ADD . ${GOPATH}/src/app/
 WORKDIR ${GOPATH}/src/app
 
 RUN go mod download github.com/showwin/speedtest-go
-
-RUN go build -a -installsuffix cgo -ldflags="-w -s" ./cmd/speedtest_exporter/main.go
+RUN go build -a -installsuffix cgo -ldflags="-w -s" -o speedtest_exporter ./cmd/speedtest_exporter/main.go
 
 # --------------------------------------------------------------------------------
 
-#FROM alpine
-#
-#LABEL summary="Speedtest Prometheus exporter" \
-#      description="A Prometheus exporter for speedtest" \
-#      name="olqs/speedtest_exporter" \
-#      url="https://github.com/olqs/speedtest_exporter" \
-#
-#COPY --from=builder /go/bin/speedtest_exporter /usr/bin/speedtest_exporter
-#
+FROM alpine
+
+LABEL summary="Speedtest Prometheus exporter" \
+      description="A Prometheus exporter for speedtest" \
+      name="olqs/speedtest_exporter" \
+      url="https://github.com/olqs/speedtest_exporter" 
+
+COPY --from=builder /speedtest_exporter /usr/bin/speedtest_exporter
+
 #COPY --from=builder /etc/passwd /etc/passwd
-#
-#EXPOSE 9090
-#
-#ENTRYPOINT [ "/usr/bin/speedtest_exporter" ]
+
+EXPOSE 9090
+
+ENTRYPOINT [ "/usr/bin/speedtest_exporter" ]
